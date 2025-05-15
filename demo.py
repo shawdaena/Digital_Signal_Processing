@@ -1,46 +1,73 @@
+'''
+Given 
+x(n)=[1,3,−2,4] 
+y(n)=[2,3,−1,3] 
+z(n)=[2,−1,4,−2] 
+Find the correlation between x(n) & y(n) and y(n) & z(n). ⟹ observe the 
+realization.
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 
-def six_point_averaging(signal):
-    output = np.zeros(len(signal))
-    
-    for n in range (len(signal)):
-        if n<5:
-            output[n] = signal[n]
-        else:
-            output[n] = (signal[n]+signal[n-1]+signal[n-2]+signal[n-3]+signal[n-4]+signal[n-5])/6.0
-            
-    return output
+# Define the sequences
+x = np.array([1, 3, -2, 4])
+y = np.array([2, 3, -1, 3])
+z = np.array([2, -1, 4, -2])
 
-def six_point_differencing(signal):
-    output = np.zeros(len(signal))
-    
-    for n in range (len(signal)):
-        if n<5:
-            output[n] = signal[n]
-        else:
-            output[n] = (signal[n] - signal[n-5])/6.0
-            
-    return output
 
-t = np.linspace(0,1,1000)
-signal = np.sin(2*np.pi*5*t) + 0.5* np.sin(2*np.pi*50*t)
+# Function to calculate normalized correlation 
 
-Averaging = six_point_averaging(signal)
-Differencing = six_point_differencing(signal)
+def normalized_corr(x, y):
+    numerator = np.sum(x * y)
+    denominator = np.sqrt(np.sum(x**2)) * np.sqrt(np.sum(y**2))
+    return numerator / denominator
 
-plt.subplot(3,2,1)
-plt.plot(t, signal)
-plt.grid()
+
+# Calculate the normalized correlation
+def correlation(x, y):
+        N = len(x) + len(y) - 1
+        result = np.zeros(N)
+
+        for i in range(N):
+              sum = 0
+              for k in range(len(x)):
+                    if i-k>=0 and i-k<len(y):
+                        sum += x[k] * y[i-k]
+              result[i] = sum
+        return result
+
+
+r_xy = normalized_corr(x, y) 
+r_yz = normalized_corr(y, z)
+s = str(r_xy)
+s = 'correlation value: ' + s[:5]
+
+r_xy_0 = correlation(x, y[::-1])
+r_yz_0 = correlation(y, z[::-1])
+lag = np.arange(-len(x) + 1, len(y))
+
+# Display the results
+
+plt.subplot(2, 1, 1)
+plt.title('Correlation between x(n) and y(n)')
+plt.stem(lag , r_xy_0, label= s, linefmt='b-', basefmt='k-')
 plt.legend()
+plt.xlabel('Lag')
+plt.ylabel('Amplitude')
+plt.grid(True)
 
-plt.subplot(3,2,2)
-plt.plot(t, Averaging)
-plt.grid()
-plt.legend()
 
-plt.subplot(3,2,3)
-plt.plot(t, Differencing)
-plt.grid()
+
+s = str(r_yz)
+s = 'correlation value: ' +s[:5]
+
+plt.subplot(2, 1, 2)
+plt.title('Correlation between y(n) and z(n)')
+plt.stem(lag, r_yz_0, label= s, linefmt='g-', basefmt='k-')
 plt.legend()
+plt.xlabel('Lag')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.tight_layout()
 plt.show()
