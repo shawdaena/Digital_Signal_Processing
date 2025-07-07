@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 n = np.arange(-10, 11, 1)
-y = np.cos(np.pi*n/4)
+y = np.cos(np.pi*n)
 
 plt.title('cos(wn)')
 plt.stem(n,y, label='cos(wn)')
