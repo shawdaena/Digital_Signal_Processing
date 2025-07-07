@@ -21,7 +21,7 @@ def six_point_differencing(signal):
         if n < 5:  
             output[n] = signal[n]
         else:
-            output[n] = (signal[n] - signal[n-5]) / 6.0
+            output[n] = (signal[n]-signal[n-1]+signal[n-2]-signal[n-3]+signal[n-4]-signal[n-5]) / 6.0
     return output
 
 
